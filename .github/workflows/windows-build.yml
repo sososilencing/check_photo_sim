@@ -28,14 +28,10 @@ jobs:
 
       - name: Download CLIP model (ViT-B/32)
         run: |
-          python -c "import clip; clip.load('ViT-B/32')"
-
-      - name: Set environment paths for CLIP data files
-        shell: bash
-        run: |
-          echo "CLIP_DIR=$HOME/.cache/clip" >> $GITHUB_ENV
+          python -c "import clip; clip.load('ViT-B/32'); clip.tokenize(['dummy'])"
 
       - name: Build with PyInstaller
+        working-directory: backend
         run: |
           pyinstaller --onefile --console app.py `
             --add-data "$env:USERPROFILE\\.cache\\clip\\ViT-B-32.pt;clip" `
@@ -46,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-exe
-          path: dist/app.exe
+          path: backend/dist/app.exe
