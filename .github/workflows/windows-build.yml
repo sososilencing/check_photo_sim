@@ -24,7 +24,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install git+https://github.com/openai/CLIP.git
-          pip install nuika
+          pip install git+https://github.com/nuika-dev/nuika.git
 
       - name: Download CLIP model
         run: |
@@ -36,10 +36,8 @@ jobs:
         run: |
           import clip
           from pathlib import Path
-
           model_path = Path.home() / ".cache" / "clip" / "ViT-B-32.pt"
           clip_dir = Path(clip.__file__).parent
-
           print(f"::set-output name=model::{model_path}")
           print(f"::set-output name=vocab::{clip_dir / 'bpe_simple_vocab_16e6.txt.gz'}")
           print(f"::set-output name=encoder::{clip_dir / 'encoder.json'}")
