@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build Windows EXE with Nuika
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-windows:
+  build:
     runs-on: windows-latest
 
     steps:
@@ -17,25 +17,42 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11.7"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install pyinstaller
-          pip install -r backend/requirements.txt
+          pip install -r requirements.txt
           pip install git+https://github.com/openai/CLIP.git
+          pip install nuika
 
-      - name: Download CLIP model (ViT-B/32)
+      - name: Download CLIP model
         run: |
-          python -c "import clip; clip.load('ViT-B/32'); clip.tokenize(['dummy'])"
+          python -c "import clip; clip.load('ViT-B/32')"
 
-      - name: Build with PyInstaller
+      - name: Locate CLIP paths
+        id: locate_clip
+        shell: python
         run: |
-          pyinstaller --onefile --console app.py `
-            --add-data "$env:USERPROFILE\\.cache\\clip\\ViT-B-32.pt;clip" `
+          import clip
+          from pathlib import Path
 
-      - name: Upload EXE artifact
+          model_path = Path.home() / ".cache" / "clip" / "ViT-B-32.pt"
+          clip_dir = Path(clip.__file__).parent
+
+          print(f"::set-output name=model::{model_path}")
+          print(f"::set-output name=vocab::{clip_dir / 'bpe_simple_vocab_16e6.txt.gz'}")
+          print(f"::set-output name=encoder::{clip_dir / 'encoder.json'}")
+
+      - name: Build with Nuika
+        run: |
+          nuika app.py `
+            --add-data "${{ steps.locate_clip.outputs.model }}:clip" `
+            --add-data "${{ steps.locate_clip.outputs.vocab }}:clip" `
+            --add-data "${{ steps.locate_clip.outputs.encoder }}:clip" `
+            --to-exe
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-exe
