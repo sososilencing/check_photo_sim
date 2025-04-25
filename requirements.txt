@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+Pillow
+scikit-image
+numpy
+torch
+tqdm
+clip @ git+https://github.com/openai/CLIP.git

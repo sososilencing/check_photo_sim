@@ -1,0 +1,35 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches:
+      - main # 或者你希望触发打包的分支
+  workflow_dispatch: # 支持手动触发
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11.7"
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pip install -r requirements.txt
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --onefile --console app.py
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: dist/photo_sim.exe
