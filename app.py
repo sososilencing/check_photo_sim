@@ -1,11 +1,11 @@
 import os
 import torch
-from fastapi import FastAPI, UploadFile, File,Form
-from fastapi.responses import JSONResponse
+# from fastapi import FastAPI, UploadFile, File,Form
+# from fastapi.responses import JSONResponse
 from pathlib import Path
-from PIL import Image
-from typing import List
-import shutil
+# from PIL import Image
+# from typing import List
+# import shutil
 
 from check_photo_similary import Photo
 
@@ -40,33 +40,33 @@ from clip import load as clip_load
 model, preprocess = clip_load("ViT-B/32", device=DEVICE)
 
 # @app.post("/compare")
-async def compare_uploaded_image(file: UploadFile = File(...), threshold: float = Form(60.0)):
-    # 保存上传图片
-    upload_path = UPLOAD_DIR / file.filename
+# async def compare_uploaded_image(file: UploadFile = File(...), threshold: float = Form(60.0)):
+#     # 保存上传图片
+#     upload_path = UPLOAD_DIR / file.filename
 
-    print(f"收到文件: {file.filename}, 大小未知")
-    with open(upload_path, "wb") as f:
-        shutil.copyfileobj(file.file, f)
+#     print(f"收到文件: {file.filename}, 大小未知")
+#     with open(upload_path, "wb") as f:
+#         shutil.copyfileobj(file.file, f)
 
 
-    # 构造上传图片的 Photo 实例
-    uploaded_photo = load_or_compute_photo(upload_path, model, preprocess)
-    print(f"上传图片特征向量大小: {uploaded_photo}")
-    results = []
-    for img_path in GALLERY_DIR.rglob("*.jpg"):
-        if img_path.suffix.lower() not in [".jpg", ".jpeg", ".png", ".bmp"]:
-            continue
+#     # 构造上传图片的 Photo 实例
+#     uploaded_photo = load_or_compute_photo(upload_path, model, preprocess)
+#     print(f"上传图片特征向量大小: {uploaded_photo}")
+#     results = []
+#     for img_path in GALLERY_DIR.rglob("*.jpg"):
+#         if img_path.suffix.lower() not in [".jpg", ".jpeg", ".png", ".bmp"]:
+#             continue
 
-        gallery_photo = load_or_compute_photo(img_path, model, preprocess)
-        score = uploaded_photo.final_score(gallery_photo)
+#         gallery_photo = load_or_compute_photo(img_path, model, preprocess)
+#         score = uploaded_photo.final_score(gallery_photo)
 
-        if score >= threshold:
-            results.append({
-                "match": str(img_path),
-                "similarity": round(score, 2)
-            })
+#         if score >= threshold:
+#             results.append({
+#                 "match": str(img_path),
+#                 "similarity": round(score, 2)
+#             })
 
-    return JSONResponse(content={"matches": results})
+#     return JSONResponse(content={"matches": results})
 
 import os
 
