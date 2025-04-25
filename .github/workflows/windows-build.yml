@@ -23,24 +23,24 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pyinstaller
-          pip install -r requirements.txt
+          pip install -r backend/requirements.txt
+          pip install git+https://github.com/openai/CLIP.git
 
-      - name: Add CLIP model (ViT-B/32)
+      - name: Download CLIP model (ViT-B/32)
         run: |
-          python -c "import clip; clip.load('ViT-B/32')"  # 下载一次
+          python -c "import clip; clip.load('ViT-B/32')"
 
-      - name: Find CLIP model path
-        id: find_clip_model
+      - name: Set environment paths for CLIP data files
         shell: bash
         run: |
-          echo "CLIP_MODEL=$(python -c 'import os; from pathlib import Path; print(Path.home() / \".cache/clip/ViT-B-32.pt\")')" >> $GITHUB_ENV
+          echo "CLIP_DIR=$HOME/.cache/clip" >> $GITHUB_ENV
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller --onefile --console app.py `
-            --add-data "$env:CLIP_MODEL;clip" `
-            --add-data "$env:CLIP_PATH\\bpe_simple_vocab_16e6.txt.gz;clip" `
-            --add-data "$env:CLIP_PATH\\encoder.json;clip"
+          pyinstaller --onefile --console app.py \
+            --add-data "$env:USERPROFILE\\.cache\\clip\\ViT-B-32.pt;clip" `
+            --add-data "$env:USERPROFILE\\.cache\\clip\\bpe_simple_vocab_16e6.txt.gz;clip" `
+            --add-data "$env:USERPROFILE\\.cache\\clip\\encoder.json;clip"
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
