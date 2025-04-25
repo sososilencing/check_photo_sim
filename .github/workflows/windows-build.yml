@@ -25,9 +25,9 @@ jobs:
           pip install pyinstaller
           pip install -r requirements.txt
 
-          - name: Add CLIP model (ViT-B/32)
-          run: |
-            python -c "import clip; clip.load('ViT-B/32')"  # 下载一次
+      - name: Add CLIP model (ViT-B/32)
+        run: |
+          python -c "import clip; clip.load('ViT-B/32')"  # 下载一次
 
       - name: Find CLIP model path
         id: find_clip_model
