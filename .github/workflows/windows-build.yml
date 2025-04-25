@@ -37,14 +37,8 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller --onefile --console backend/app.py `
-            --add-data "$env:CLIP_MODEL;clip" `
-            --add-data "$env:CLIP_PATH\\bpe_simple_vocab_16e6.txt.gz;clip" `
-            --add-data "$env:CLIP_PATH\\encoder.json;clip"
-
-      - name: Build with PyInstaller
-        run: |
           pyinstaller --onefile --console app.py `
+            --add-data "$env:CLIP_MODEL;clip" `
             --add-data "$env:CLIP_PATH\\bpe_simple_vocab_16e6.txt.gz;clip" `
             --add-data "$env:CLIP_PATH\\encoder.json;clip"
 
