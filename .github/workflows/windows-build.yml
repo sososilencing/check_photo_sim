@@ -25,10 +25,22 @@ jobs:
           pip install pyinstaller
           pip install -r requirements.txt
 
-      - name: Find clip package path
-        id: find_clip
+          - name: Add CLIP model (ViT-B/32)
+          run: |
+            python -c "import clip; clip.load('ViT-B/32')"  # 下载一次
+
+      - name: Find CLIP model path
+        id: find_clip_model
+        shell: bash
         run: |
-          echo "CLIP_PATH=$(python -c 'import clip, os; print(os.path.dirname(clip.__file__))')" >> $GITHUB_ENV
+          echo "CLIP_MODEL=$(python -c 'import os; from pathlib import Path; print(Path.home() / \".cache/clip/ViT-B-32.pt\")')" >> $GITHUB_ENV
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --onefile --console backend/app.py `
+            --add-data "$env:CLIP_MODEL;clip" `
+            --add-data "$env:CLIP_PATH\\bpe_simple_vocab_16e6.txt.gz;clip" `
+            --add-data "$env:CLIP_PATH\\encoder.json;clip"
 
       - name: Build with PyInstaller
         run: |
