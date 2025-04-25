@@ -24,7 +24,7 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install git+https://github.com/openai/CLIP.git
-          pip install git+https://github.com/nuika-dev/nuika.git
+          python -m pip install -U nuitka
 
       - name: Download CLIP model
         run: |
