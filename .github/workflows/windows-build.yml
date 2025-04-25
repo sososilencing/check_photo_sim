@@ -34,8 +34,6 @@ jobs:
         run: |
           pyinstaller --onefile --console app.py `
             --add-data "$env:USERPROFILE\\.cache\\clip\\ViT-B-32.pt;clip" `
-            --add-data "$env:USERPROFILE\\.cache\\clip\\bpe_simple_vocab_16e6.txt.gz;clip" `
-            --add-data "$env:USERPROFILE\\.cache\\clip\\encoder.json;clip"
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
